@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Tripper Dash Navigator",
+    "slug": "tripper-dash-navigator",
+    "scheme": "tripperdash",
+    "version": "0.2.0",
+    "orientation": "default",
+    "userInterfaceStyle": "dark",
+    "splash": { "backgroundColor": "#0A0A0B" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tripper.dashnavigator",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used to scan Tripper Dash Wi-Fi credentials.",
+        "NSLocationWhenInUseUsageDescription": "Tripper Dash Navigator uses your location to provide turn-by-turn navigation and stream guidance to the Tripper Dash cluster.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Background location is required to continue navigation when the screen is off.",
+        "NSLocalNetworkUsageDescription": "Discovers Tripper Dash on local Wi-Fi.",
+        "UIBackgroundModes": ["location", "fetch"]
+      },
+      "config": {
+        "googleMapsApiKey": "REPLACE_WITH_YOUR_IOS_GOOGLE_MAPS_KEY_OR_OMIT_FOR_APPLE_MAPS"
+      }
+    },
+    "android": {
+      "package": "com.tripper.dashnavigator",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "ACCESS_WIFI_STATE",
+        "CHANGE_WIFI_STATE",
+        "ACCESS_NETWORK_STATE",
+        "INTERNET",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "REPLACE_WITH_YOUR_ANDROID_GOOGLE_MAPS_KEY"
+        }
+      }
+    },
+    "plugins": [
+      "expo-camera",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Tripper Dash Navigator to use your location for navigation."
+        }
+      ]
+    ]
+  }
+}
