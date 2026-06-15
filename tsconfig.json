@@ -7,9 +7,10 @@
       "@/*": ["src/*"]
     },
     "jsx": "react-native",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }

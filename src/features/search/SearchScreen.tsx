@@ -33,7 +33,7 @@ export const SearchScreen: React.FC = () => {
       try {
         const preds = await placeService.autocomplete(q);
         // Map to lightweight Place-like items (will fetch full details on select)
-        setResults(preds.map((p: any) => ({ id: p.place_id, name: p.description, coord: { lat: 0, lng: 0 } } as Place)));
+        setResults(preds.map((p: any) => ({ id: p.place_id, name: p.description, coord: { latitude: 0, longitude: 0 } } as Place)));
       } catch (e: any) {
         const msg = e?.message ?? String(e);
         console.warn('Places autocomplete failed', msg);
@@ -55,7 +55,7 @@ export const SearchScreen: React.FC = () => {
       const details = await placeService.getPlaceDetails(p.id);
 
       const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-      const startPlace: Place = { id: 'current', name: 'Current location', coord: { lat: loc.coords.latitude, lng: loc.coords.longitude } };
+      const startPlace: Place = { id: 'current', name: 'Current location', coord: { latitude: loc.coords.latitude, longitude: loc.coords.longitude } };
 
       const dirs = await placeService.directions(startPlace.coord, details.coord);
 

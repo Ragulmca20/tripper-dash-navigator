@@ -48,13 +48,13 @@ export const placeService = {
       id: placeId,
       name: json.result?.name ?? json.result?.formatted_address ?? 'Unknown',
       subtitle: json.result?.formatted_address,
-      coord: { lat: loc.lat ?? 0, lng: loc.lng ?? 0 },
+      coord: { latitude: loc.lat ?? 0, longitude: loc.lng ?? 0 },
     } as Place;
   },
 
-  async directions(from: { lat: number; lng: number }, to: { lat: number; lng: number }) {
+  async directions(from: { latitude: number; longitude: number }, to: { latitude: number; longitude: number }) {
     assertApiKey();
-    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${from.lat},${from.lng}&destination=${to.lat},${to.lng}&key=${API_KEY}&mode=driving`;
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${from.latitude},${from.longitude}&destination=${to.latitude},${to.longitude}&key=${API_KEY}&mode=driving`;
     const res = await fetch(url);
     const json = (await res.json()) as GoogleResponse;
     if (!json || typeof json.status !== 'string') {

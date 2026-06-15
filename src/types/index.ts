@@ -1,6 +1,6 @@
 /** Domain types shared across features. */
 
-export type LatLng = { lat: number; lng: number };
+export type LatLng = { latitude: number; longitude: number };
 export type MapLatLng = import('react-native-maps').LatLng;
 
 export type Place = {

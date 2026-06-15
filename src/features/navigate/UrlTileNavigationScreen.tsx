@@ -37,7 +37,7 @@ export default function UrlTileNavigationScreen() {
   return (
     <View style={styles.container}>
       <MapView
-        ref={r => (mapRef.current = r)}
+        ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={loc ? { latitude: loc.latitude, longitude: loc.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 } : undefined}

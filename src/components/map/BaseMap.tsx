@@ -33,7 +33,7 @@ export type BaseMapProps = MapViewProps & {
   children?: React.ReactNode;
 };
 
-const TILE_DIR = `${FileSystem.documentDirectory ?? ''}tiles`;
+const TILE_DIR = `${(FileSystem as any).documentDirectory ?? ''}tiles`;
 
 export const DEFAULT_REGION: Region = {
   latitude: 12.9716,
@@ -60,18 +60,11 @@ const BaseMap = forwardRef<MapView, BaseMapProps>(function BaseMap(
         provider={provider}
         onMapReady={() => setMapReady(true)}
         onMapLoaded={() => setMapReady(true)}
-        onMapError={(e) => {
-          // surface a concise error for debugging
-          const msg = e?.nativeEvent?.message ?? JSON.stringify(e);
-          // eslint-disable-next-line no-console
-          console.error('BaseMap: map error', msg);
-          setMapError(String(msg));
-        }}
         style={StyleSheet.absoluteFill}
         customMapStyle={darkMapStyle}
         showsCompass={false}
         showsMyLocationButton={false}
-        showsPointsOfInterest={false}
+        showsPointsOfInterests={false}
         showsTraffic={false}
         showsBuildings={false}
         toolbarEnabled={false}
@@ -112,7 +105,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(10,10,11,0.6)',

@@ -17,7 +17,7 @@ export const gpsService = {
       { accuracy: Location.Accuracy.BestForNavigation, distanceInterval: 5, timeInterval: 1000 },
       (loc) =>
         onFix({
-          coord: { lat: loc.coords.latitude, lng: loc.coords.longitude },
+          coord: { latitude: loc.coords.latitude, longitude: loc.coords.longitude },
           headingDeg: loc.coords.heading ?? undefined,
           speedKmh: loc.coords.speed != null ? loc.coords.speed * 3.6 : undefined,
           accuracyM: loc.coords.accuracy ?? undefined,

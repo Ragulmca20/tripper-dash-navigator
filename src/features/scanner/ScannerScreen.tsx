@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   body: { ...typography.body, color: colors.textMuted, marginBottom: spacing.xl },
   top: { position: 'absolute', top: 0, left: 0, right: 0, padding: spacing.xl },
   eyebrow: { ...typography.label, color: colors.amber, letterSpacing: 2 },
-  reticleWrap: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },
+  reticleWrap: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },
   reticle: { width: 280, height: 160, borderRadius: 12 },
   hint: { ...typography.body, color: colors.text, backgroundColor: 'rgba(0,0,0,0.55)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
   bottom: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, alignItems: 'center' },

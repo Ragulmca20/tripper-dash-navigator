@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import * as Location from 'expo-location';
-import { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import * as Location from 'expo-location';
 import { Map, Camera, UserLocation, GeoJSONSource, Layer } from '@maplibre/maplibre-react-native';
 import { getRouteOSRM } from '../../services/routingService';
 import { LatLng } from '../../types';
@@ -38,7 +35,7 @@ export default function MapLibreNavigationScreen() {
 
   return (
     <View style={styles.container}>
-      <Map style={styles.map} styleURL="https://demotiles.maplibre.org/style.json">
+      <Map style={styles.map} mapStyle="https://demotiles.maplibre.org/style.json">
         <Camera
           ref={cameraRef}
           initialViewState={
@@ -51,7 +48,7 @@ export default function MapLibreNavigationScreen() {
         {route && (
           <GeoJSONSource
             id="routeSource"
-            data={{ type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'LineString', coordinates: route.map(r => [r.longitude, r.latitude]) } }] }}
+            data={{ type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: route.map(r => [r.longitude, r.latitude]) } }] }}
           >
             <Layer
               id="routeLine"
