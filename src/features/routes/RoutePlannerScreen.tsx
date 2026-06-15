@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, FlatList,
 } from 'react-native';
-import MapView, { LatLng, MapPressEvent, Marker } from 'react-native-maps';
+import MapView, { LatLng, LongPressEvent, MapPressEvent, Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import BaseMap from '@/components/map/BaseMap';
 import RoutePolyline from '@/components/map/RoutePolyline';
@@ -28,7 +28,7 @@ export default function RoutePlannerScreen() {
     else setVia((v) => [...v, c]);
   };
 
-  const onLongPress = (e: MapPressEvent) =>
+  const onLongPress = (e: LongPressEvent) =>
     setVia((v) => [...v, e.nativeEvent.coordinate]);
 
   const calculate = async () => {

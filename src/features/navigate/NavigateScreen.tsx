@@ -83,7 +83,7 @@ export const NavigateScreen: React.FC = () => {
             onPress={() => {
               if (!activeRoute) return;
               start(activeRoute.id, activeRoute.durationMin, activeRoute.distanceKm);
-              nav.navigate('NavigationMap', { routeId: activeRoute.id });
+              nav.navigate('MapLibreNavigation', { routeId: activeRoute.id });
             }}
           />
         ) : (

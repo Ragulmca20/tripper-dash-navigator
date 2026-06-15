@@ -5,7 +5,7 @@ import { colors } from '@/theme';
 import { BottomTabs } from './BottomTabs';
 import { RouteDetailScreen } from '@/features/routes/RouteDetailScreen';
 import { DownloadScreen } from '@/features/routes/DownloadScreen';
-import NavigationMapScreen from '@/features/navigate/NavigationMapScreen';
+import MapLibreNavigationScreen from '@/features/navigate/MapLibreNavigationScreen';
 import { DashPreviewScreen } from '@/features/dash/DashPreviewScreen';
 import RoutePreviewScreen from '@/features/routes/RoutePreviewScreen';
 import RoutePlannerScreen from '@/features/routes/RoutePlannerScreen';
@@ -14,7 +14,7 @@ export type RootStackParams = {
   Tabs: undefined;
   RouteDetail: { routeId: string };
   Download: { routeId: string };
-  NavigationMap: { routeId: string };
+  MapLibreNavigation: { routeId?: string };
   DashPreview: { routeId?: string };
   RoutePreview: { routeId: string };
   RoutePlanner: undefined;
@@ -49,7 +49,7 @@ export const RootNavigator = () => (
       <Stack.Screen name="Tabs" component={BottomTabs} options={{ headerShown: false }} />
       <Stack.Screen name="RouteDetail" component={RouteDetailScreen} options={{ title: 'Route' }} />
       <Stack.Screen name="Download" component={DownloadScreen} options={{ title: 'Downloading' }} />
-      <Stack.Screen name="NavigationMap" component={NavigationMapScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="MapLibreNavigation" component={MapLibreNavigationScreen} options={{ headerShown: false }} />
       <Stack.Screen name="DashPreview" component={DashPreviewScreen} options={{ title: 'Dash Preview' }} />
       <Stack.Screen name="RoutePreview" component={RoutePreviewScreen} options={{ title: 'Route Preview' }} />
       <Stack.Screen name="RoutePlanner" component={RoutePlannerScreen} options={{ title: 'Plan Route' }} />

@@ -1,20 +1,6 @@
 import { create } from 'zustand';
 import type { RoutePackage, Place } from '@/types';
 
-const sample = (id: string, fromName: string, toName: string, km: number, min: number): RoutePackage => ({
-  id,
-  from: { id: `${id}-f`, name: fromName, coord: { lat: 12.97, lng: 77.59 } },
-  to: { id: `${id}-t`, name: toName, coord: { lat: 12.29, lng: 76.64 } },
-  distanceKm: km,
-  durationMin: min,
-  polyline: [],
-  maneuvers: [],
-  corridorRadiusM: 2000,
-  sizeBytes: Math.round(km * 380_000), // ~380 KB/km rough estimate
-  downloadedAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
-  status: 'ready',
-});
-
 type RoutesState = {
   routes: RoutePackage[];
   recent: Place[];
@@ -27,21 +13,40 @@ type RoutesState = {
   toggleFavorite: (p: Place) => void;
 };
 
+function polylineHash(polyline: import('@/types').MapLatLng[]) {
+  try {
+    return JSON.stringify(
+      polyline.map((p) => {
+        const lat = (p as any).latitude ?? (p as any).lat ?? 0;
+        const lng = (p as any).longitude ?? (p as any).lng ?? 0;
+        return [lat, lng];
+      }),
+    );
+  } catch {
+    return '';
+  }
+}
+
 export const useRoutesStore = create<RoutesState>((set, get) => ({
-  routes: [
-    sample('r1', 'Bengaluru', 'Mysuru', 145, 180),
-    sample('r2', 'Manali', 'Leh', 472, 1080),
-    sample('r3', 'Mumbai', 'Goa', 590, 720),
-  ],
-  recent: [
-    { id: 'p1', name: 'Nandi Hills', subtitle: 'Karnataka', coord: { lat: 13.37, lng: 77.68 } },
-    { id: 'p2', name: 'Coorg', subtitle: 'Karnataka', coord: { lat: 12.42, lng: 75.73 } },
-  ],
-  favorites: [
-    { id: 'h', name: 'Home', subtitle: 'HSR Layout', coord: { lat: 12.91, lng: 77.64 } },
-    { id: 'w', name: 'Workshop', subtitle: 'Indiranagar', coord: { lat: 12.97, lng: 77.64 } },
-  ],
-  addRoute: (r) => set((s) => ({ routes: [r, ...s.routes.filter((x) => x.id !== r.id)] })),
+  routes: [],
+  recent: [],
+  favorites: [],
+  addRoute: (r) =>
+    set((s) => {
+      // Prevent caching duplicate routes: if a route exists with the same
+      // polyline hash we update it instead of inserting a new entry.
+      const incomingHash = polylineHash(r.polyline as any);
+      const existingIdx = s.routes.findIndex((x) => polylineHash(x.polyline as any) === incomingHash);
+      if (existingIdx >= 0) {
+        const updated = [...s.routes];
+        updated[existingIdx] = { ...updated[existingIdx], ...r };
+        // Move updated route to the front (most recent)
+        const found = updated.splice(existingIdx, 1)[0];
+        return { routes: [found, ...updated] };
+      }
+      // Otherwise insert and ensure no duplicate ids remain
+      return { routes: [r, ...s.routes.filter((x) => x.id !== r.id)] };
+    }),
   removeRoute: (id) => set((s) => ({ routes: s.routes.filter((r) => r.id !== id) })),
   updateRoute: (id, patch) =>
     set((s) => ({ routes: s.routes.map((r) => (r.id === id ? { ...r, ...patch } : r)) })),

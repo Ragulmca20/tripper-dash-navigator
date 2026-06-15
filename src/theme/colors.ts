@@ -12,11 +12,14 @@ export const colors = {
 
   // Text
   text: '#F5F6F7',
+  textPrimary: '#F5F6F7',
+  textSecondary: '#9AA0A6',
   textMuted: '#9AA0A6',
   textDim: '#6B7079',
 
   // Brand
   amber: '#FFB400',       // Royal Enfield amber / yellow
+  accent: '#FFB400',
   amberDim: '#7A5600',
   electric: '#3DA9FC',    // electric blue accent
 

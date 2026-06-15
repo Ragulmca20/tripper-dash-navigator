@@ -20,18 +20,21 @@ export interface DashService {
   isConnected(): boolean;
 }
 
-class MockDashService implements DashService {
+class UnimplementedDashService implements DashService {
   private connected = false;
   async connect(ssid: string, password = DEFAULT_DASH_PASSWORD) {
-    await new Promise((r) => setTimeout(r, 800));
     if (!ssid) throw new Error('SSID required');
-    // eslint-disable-next-line no-console
-    console.log('[dash] connect', { ssid, password: password.replace(/./g, '•') });
-    this.connected = true;
+    throw new Error('Dash connection is not implemented. Install the native dash bridge to connect.');
   }
-  async disconnect() { this.connected = false; }
-  async sendFrame(_f: DashFrame) { /* native bridge */ }
-  isConnected() { return this.connected; }
+  async disconnect() {
+    this.connected = false;
+  }
+  async sendFrame(_f: DashFrame) {
+    throw new Error('Dash frame streaming is not implemented.');
+  }
+  isConnected() {
+    return this.connected;
+  }
 }
 
-export const dashService: DashService = new MockDashService();
+export const dashService: DashService = new UnimplementedDashService();

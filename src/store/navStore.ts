@@ -25,6 +25,10 @@ type NavState = {
   setHeading: (h: number) => void;
   setManeuver: (m: Maneuver) => void;
   setRemainingIndex: (i: number) => void;
+  // Drive mode: when true the map centers and rotates with heading and
+  // disables user panning. Controlled by the UI toggle in NavigationMapScreen.
+  driveMode: boolean;
+  setDriveMode: (v: boolean) => void;
 };
 
 export const useNavStore = create<NavState>((set) => ({
@@ -60,4 +64,6 @@ export const useNavStore = create<NavState>((set) => ({
   setHeading: (h) => set({ heading: h }),
   setManeuver: (m) => set({ nextManeuver: m }),
   setRemainingIndex: (i) => set({ remainingIndex: i }),
+  driveMode: false,
+  setDriveMode: (v: boolean) => set({ driveMode: v }),
 }));

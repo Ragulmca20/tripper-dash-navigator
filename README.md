@@ -18,6 +18,26 @@ npx expo start
 # press `a` for Android, `i` for iOS
 ```
 
+### Environment
+
+This project reads `GOOGLE_MAPS_API_KEY` from the environment at build/runtime. Create a `.env` file in the project root with:
+
+```bash
+GOOGLE_MAPS_API_KEY=your_real_api_key_here
+```
+
+Or export it in your shell before running Expo:
+
+```bash
+# macOS / Linux
+export GOOGLE_MAPS_API_KEY=your_real_api_key_here
+
+# Windows PowerShell
+$env:GOOGLE_MAPS_API_KEY = 'your_real_api_key_here'
+```
+
+`app.config.js` loads this key into Expo's runtime `extra` and native config. Never commit your real key to version control.
+
 Requires Expo SDK 51, Node ≥ 18, and either Xcode or Android Studio installed for native builds. The Scanner screen requires a physical device (camera).
 
 Default dash Wi-Fi password is **`12345678`** (constant `DEFAULT_DASH_PASSWORD` in `src/store/connectionStore.ts`).

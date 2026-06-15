@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useRoute, useNavigation, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
@@ -24,16 +24,26 @@ export const DownloadScreen: React.FC = () => {
   useEffect(() => {
     let mounted = true;
     update(params.routeId, { status: 'downloading', progress: 0 });
-    downloadService.downloadRoute(params.routeId, (p) => {
+    const downloadPromise = downloadService.downloadRoute(params.routeId, (p) => {
       if (!mounted) return;
       setPct(p);
       w.value = withTiming(p, { duration: 200, easing: Easing.out(Easing.cubic) });
       update(params.routeId, { progress: p });
-    }).then(() => {
-      if (!mounted) return;
-      setDone(true);
-      update(params.routeId, { status: 'ready', progress: 1, downloadedAt: Date.now() });
     });
+
+    downloadPromise
+      .then(() => {
+        if (!mounted) return;
+        setDone(true);
+        update(params.routeId, { status: 'ready', progress: 1, downloadedAt: Date.now() });
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        console.error('Download failed', error);
+        update(params.routeId, { status: 'error', progress: 0 });
+        Alert.alert('Download failed', error?.message ?? 'Unable to download route package.');
+      });
+
     return () => { mounted = false; };
   }, [params.routeId, update, w]);
 

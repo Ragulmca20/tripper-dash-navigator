@@ -13,8 +13,8 @@
  * for @maplibre/maplibre-react-native — the props surface is similar but the
  * tile pipeline is fundamentally different.
  */
-import React, { forwardRef, useMemo } from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
+import React, { forwardRef, useMemo, useState } from 'react';
+import { StyleSheet, View, Platform, Text, ActivityIndicator } from 'react-native';
 import MapView, {
   PROVIDER_GOOGLE,
   PROVIDER_DEFAULT,
@@ -46,6 +46,8 @@ const BaseMap = forwardRef<MapView, BaseMapProps>(function BaseMap(
   { offlineMode = false, useGoogleOnIOS = false, children, style, ...rest },
   ref,
 ) {
+  const [mapReady, setMapReady] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const provider = useMemo(() => {
     if (Platform.OS === 'android') return PROVIDER_GOOGLE;
     return useGoogleOnIOS ? PROVIDER_GOOGLE : PROVIDER_DEFAULT;
@@ -56,6 +58,15 @@ const BaseMap = forwardRef<MapView, BaseMapProps>(function BaseMap(
       <MapView
         ref={ref}
         provider={provider}
+        onMapReady={() => setMapReady(true)}
+        onMapLoaded={() => setMapReady(true)}
+        onMapError={(e) => {
+          // surface a concise error for debugging
+          const msg = e?.nativeEvent?.message ?? JSON.stringify(e);
+          // eslint-disable-next-line no-console
+          console.error('BaseMap: map error', msg);
+          setMapError(String(msg));
+        }}
         style={StyleSheet.absoluteFill}
         customMapStyle={darkMapStyle}
         showsCompass={false}
@@ -80,6 +91,16 @@ const BaseMap = forwardRef<MapView, BaseMapProps>(function BaseMap(
         )}
         {children}
       </MapView>
+      {!mapReady && !mapError && (
+        <View style={styles.loadingOverlay} pointerEvents="none">
+          <ActivityIndicator size="large" color={colors.accent} />
+        </View>
+      )}
+      {mapError && (
+        <View style={styles.errorBanner}>
+          <Text style={styles.errorText}>Map failed to load: {mapError}</Text>
+        </View>
+      )}
     </View>
   );
 });
@@ -90,6 +111,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     overflow: 'hidden',
   },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(10,10,11,0.6)',
+  },
+  errorBanner: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    right: 12,
+    padding: 10,
+    backgroundColor: 'rgba(255,59,48,0.95)',
+    borderRadius: 8,
+  },
+  errorText: { color: '#fff', fontWeight: '700' },
 });
 
 export default BaseMap;

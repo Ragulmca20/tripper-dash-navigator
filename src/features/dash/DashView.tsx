@@ -14,19 +14,42 @@ import UserPuck from '@/components/map/UserPuck';
 import { colors } from '@/theme';
 import { useNavStore } from '@/store/navStore';
 
-const CLUSTER_W = 526;
-const CLUSTER_H = 300;
+export const DASH_W = 526;
+export const DASH_H = 300;
 
-export default function DashView({ polyline = [] as LatLng[] }) {
+interface DashViewProps {
+  polyline?: LatLng[];
+  etaMin?: number;
+  remainingKm?: number;
+  speedKmh?: number;
+  nextManeuverM?: number;
+  nextManeuverLabel?: string;
+  headingDeg?: number;
+}
+
+export default function DashView({
+  polyline = [] as LatLng[],
+  etaMin,
+  remainingKm,
+  speedKmh,
+  nextManeuverM,
+  nextManeuverLabel,
+  headingDeg,
+}: DashViewProps) {
   const mapRef = useRef<MapView | null>(null);
   const session = useNavStore((s) => s.session);
   const coords: LatLng | undefined = (session as any)?.coords;
-  const heading: number = (session as any)?.heading ?? 0;
-  const speedKmh: number = (session as any)?.speedKmh ?? 0;
-  const etaMinutes: number = session?.etaMin ?? 0;
-  const remainingKm: number = session?.remainingKm ?? 0;
-  const nextManeuver: { glyph?: string; distanceM?: number; instruction?: string } | undefined =
+  const heading: number = headingDeg ?? (session as any)?.heading ?? 0;
+  const speed = speedKmh ?? (session as any)?.speedKmh ?? 0;
+  const etaMinutes: number = etaMin ?? session?.etaMin ?? 0;
+  const remainingDistanceKm: number = remainingKm ?? session?.remainingKm ?? 0;
+  const nextManeuverFromSession: { glyph?: string; distanceM?: number; instruction?: string } | undefined =
     (session as any)?.nextManeuver;
+  const nextManeuver = nextManeuverFromSession ?? {
+    glyph: '↑',
+    distanceM: nextManeuverM ?? 0,
+    instruction: nextManeuverLabel ?? 'Continue',
+  };
 
   useEffect(() => {
     if (mapRef.current && coords) {
@@ -70,8 +93,8 @@ export default function DashView({ polyline = [] as LatLng[] }) {
       {/* RIGHT: HUD */}
       <View style={[styles.col, styles.colRight]}>
         <HudStat label="ETA" value={`${etaMinutes}`} unit="min" />
-        <HudStat label="LEFT" value={`${remainingKm.toFixed(1)}`} unit="km" />
-        <HudStat label="SPD" value={`${Math.round(speedKmh)}`} unit="km/h" big />
+        <HudStat label="LEFT" value={`${remainingDistanceKm.toFixed(1)}`} unit="km" />
+        <HudStat label="SPD" value={`${Math.round(speed)}`} unit="km/h" big />
       </View>
     </View>
   );
@@ -88,7 +111,7 @@ const HudStat = ({ label, value, unit, big }: any) => (
 
 const styles = StyleSheet.create({
   cluster: {
-    width: CLUSTER_W, height: CLUSTER_H,
+    width: DASH_W, height: DASH_H,
     backgroundColor: '#000', flexDirection: 'row',
     borderRadius: 12, overflow: 'hidden',
   },

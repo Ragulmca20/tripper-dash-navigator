@@ -53,7 +53,7 @@ export const RoutesScreen: React.FC = () => {
             <RouteCard
               route={item}
               onPress={() => nav.navigate('RouteDetail', { routeId: item.id })}
-              onNavigate={() => nav.navigate('NavigationMap', { routeId: item.id })}
+              onNavigate={() => nav.navigate('MapLibreNavigation', { routeId: item.id })}
             />
           )}
         />

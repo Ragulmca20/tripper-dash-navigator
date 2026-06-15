@@ -1,18 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
-import { useRoute, type RouteProp } from '@react-navigation/native';
+import { CompositeNavigationProp, useRoute, useNavigation, type RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { colors, radius, spacing, typography } from '@/theme';
-import { DashView, DASH_W, DASH_H } from './DashView';
+import DashView, { DASH_W, DASH_H } from './DashView';
 import { ActionButton } from '@/components/ActionButton';
 import { Icon } from '@/components/TabIcon';
 import { useConnectionStore } from '@/store/connectionStore';
+import { TabParams } from '@/navigation/BottomTabs';
 import type { RootStackParams } from '@/navigation/RootNavigator';
+
+type DashPreviewNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<RootStackParams, 'DashPreview'>,
+  BottomTabNavigationProp<TabParams>
+>;
 
 export const DashPreviewScreen: React.FC = () => {
   const { params } = useRoute<RouteProp<RootStackParams, 'DashPreview'>>();
+  const nav = useNavigation<DashPreviewNavigationProp>();
   const { width } = useWindowDimensions();
   const dash = useConnectionStore((s) => s.dash);
   const dashSsid = useConnectionStore((s) => s.dashSsid);
+  const setDash = useConnectionStore((s) => s.setDash);
 
   // Fit the 526x300 dash inside the phone width with a small margin.
   const scale = Math.min(1, (width - spacing.xl * 2) / DASH_W);
@@ -46,7 +56,15 @@ export const DashPreviewScreen: React.FC = () => {
         <Row label="ROUTE" value={params?.routeId ?? '—'} />
       </View>
 
-      <ActionButton label={dash === 'connected' ? 'Disconnect Dash' : 'Connect via Scanner'} variant="secondary" icon={<Icon.Wifi color={colors.text} />} />
+      <ActionButton
+        label={dash === 'connected' ? 'Disconnect Dash' : 'Connect via Scanner'}
+        variant={dash === 'connected' ? 'primary' : 'secondary'}
+        icon={<Icon.Wifi color={dash === 'connected' ? colors.bg : colors.text} />}
+        onPress={() => {
+          if (dash === 'connected') setDash('disconnected');
+          else nav.navigate('Scanner');
+        }}
+      />
     </ScrollView>
   );
 };
@@ -54,7 +72,7 @@ export const DashPreviewScreen: React.FC = () => {
 const Row: React.FC<{ label: string; value: string; tone?: string }> = ({ label, value, tone }) => (
   <View style={styles.row}>
     <Text style={styles.rowLabel}>{label}</Text>
-    <Text style={[styles.rowValue, tone && { color: tone }]}>{value}</Text>
+    <Text style={[styles.rowValue, tone ? { color: tone } : undefined]}>{value}</Text>
   </View>
 );
 

@@ -26,6 +26,8 @@ export default function NavigationMapScreen() {
   const route = useRoutesStore((s) => s.routes.find((r) => r.id === params.routeId));
   const { speedKmh, etaMinutes, remainingKm, nextManeuver, start, stop, setLocation } =
     useNavStore();
+  const driveMode = useNavStore((s) => s.driveMode);
+  const setDriveMode = useNavStore((s) => s.setDriveMode);
 
   const [coords, setCoords] = useState<LatLng | null>(null);
   const [heading, setHeading] = useState(0);
@@ -33,19 +35,40 @@ export default function NavigationMapScreen() {
   const [permError, setPermError] = useState<string | null>(null);
 
   // Decode route polyline (assumes route.polyline is LatLng[])
-  const polyline: LatLng[] = useMemo(() => route?.polyline ?? [], [route]);
+  const polyline = useMemo<import('react-native-maps').LatLng[]>(() => route?.polyline ?? [], [route]);
   const remainingIndex = useNavStore((s) => s.remainingIndex);
+
+  useEffect(() => {
+    // Debug: log polyline / route presence when navigation starts
+    // eslint-disable-next-line no-console
+    console.log('NavigationMap: polyline length', polyline.length, 'routeId', params.routeId);
+    if (mapRef.current && polyline.length > 1) {
+      // eslint-disable-next-line no-console
+      console.log('NavigationMap: fitting to route coordinates');
+      mapRef.current.fitToCoordinates(polyline, {
+        edgePadding: { top: 120, right: 80, bottom: 260, left: 80 },
+        animated: true,
+      });
+    }
+  }, [polyline]);
 
   useEffect(() => {
     let locSub: Location.LocationSubscription | null = null;
     let headSub: Location.LocationSubscription | null = null;
 
     (async () => {
+      // eslint-disable-next-line no-console
+      console.log('NavigationMap: requesting permission');
       const { status } = await Location.requestForegroundPermissionsAsync();
+      // eslint-disable-next-line no-console
+      console.log('NavigationMap: permission status', status);
       if (status !== 'granted') {
         setPermError('Location permission denied');
         return;
       }
+      // start nav session
+      // eslint-disable-next-line no-console
+      console.log('NavigationMap: starting nav for', params.routeId);
       start(params.routeId);
 
       locSub = await Location.watchPositionAsync(
@@ -56,9 +79,13 @@ export default function NavigationMapScreen() {
         },
         (loc) => {
           const c = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
+          // eslint-disable-next-line no-console
+          console.log('NavigationMap: got location', c, 'speed', loc.coords.speed, 'heading', loc.coords.heading);
           setCoords(c);
           setLocation(c, loc.coords.speed ?? 0);
           if (follow && mapRef.current) {
+            // eslint-disable-next-line no-console
+            console.log('NavigationMap: animate camera to', c);
             mapRef.current.animateCamera(
               {
                 center: c,
@@ -105,20 +132,44 @@ export default function NavigationMapScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Debug overlay */}
+      <View style={styles.debugBox} pointerEvents="none">
+        <Text style={{ color: '#fff', fontSize: 12 }}>routePts: {polyline.length}</Text>
+        <Text style={{ color: '#fff', fontSize: 12 }}>coords: {coords ? `${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)}` : 'none'}</Text>
+        <Text style={{ color: '#fff', fontSize: 12 }}>driveMode: {driveMode ? 'ON' : 'OFF'}</Text>
+      </View>
       <BaseMap
         ref={mapRef}
-        offlineMode={route.downloaded}
-        onPanDrag={() => setFollow(false)}
+        offlineMode={route.status === 'ready'}
+        onPanDrag={() => !driveMode && setFollow(false)}
+        scrollEnabled={!driveMode}
+        rotateEnabled={!driveMode}
+        pitchEnabled={!driveMode}
         initialRegion={{
           latitude: polyline[0]?.latitude ?? 12.9716,
           longitude: polyline[0]?.longitude ?? 77.5946,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         }}
       >
         <RoutePolyline coordinates={polyline} remainingFromIndex={remainingIndex} />
         {coords && <UserPuck coordinate={coords} heading={heading} />}
       </BaseMap>
+
+      {/* Drive Mode toggle */}
+      <TouchableOpacity
+        style={[styles.recenterFab, { right: 80 }]}
+        onPress={() => {
+          const next = !driveMode;
+          setDriveMode(next);
+          setFollow(true);
+          if (next && coords && mapRef.current) {
+            mapRef.current.animateCamera({ center: coords, pitch: 55, heading, zoom: 17 }, { duration: 400 });
+          }
+        }}
+      >
+        <Text style={styles.recenterText}>{driveMode ? 'Drive: ON' : 'Drive: OFF'}</Text>
+      </TouchableOpacity>
 
       {/* Next maneuver banner */}
       <View style={styles.maneuverBanner}>
@@ -154,7 +205,7 @@ export default function NavigationMapScreen() {
 
       {permError && (
         <View style={styles.permBanner}>
-          <ActivityIndicator color={colors.accent} />
+          <ActivityIndicator color={colors.amber} />
           <Text style={styles.permText}>{permError}</Text>
         </View>
       )}
@@ -176,7 +227,7 @@ function Stat({ label, value, unit }: { label: string; value: string; unit: stri
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
   fallback: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },
-  fallbackText: { color: colors.textPrimary, fontSize: 16 },
+  fallbackText: { color: colors.text, fontSize: 16 },
   maneuverBanner: {
     position: 'absolute',
     top: 56,
@@ -226,4 +277,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 10,
   },
   permText: { color: '#fff', fontWeight: '700' },
+  debugBox: {
+    position: 'absolute', top: 12, right: 12, padding: 8, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 8,
+    zIndex: 999,
+  },
 });

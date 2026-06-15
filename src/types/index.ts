@@ -1,6 +1,7 @@
 /** Domain types shared across features. */
 
 export type LatLng = { lat: number; lng: number };
+export type MapLatLng = import('react-native-maps').LatLng;
 
 export type Place = {
   id: string;
@@ -24,7 +25,7 @@ export type RoutePackage = {
   distanceKm: number;
   durationMin: number;
   /** Encoded polyline string or array of coords. */
-  polyline: LatLng[];
+  polyline: MapLatLng[];
   maneuvers: Maneuver[];
   /** Corridor half-width in metres around the polyline. Default 2000m. */
   corridorRadiusM: number;
@@ -33,6 +34,11 @@ export type RoutePackage = {
   downloadedAt: number; // epoch ms
   status: 'queued' | 'downloading' | 'ready' | 'stale' | 'error';
   progress?: number;    // 0..1, only while downloading
+  estimatedMinutes?: number;
+  elevationGainM?: number;
+  tilesEstimateMb?: number;
+  surface?: string;
+  difficulty?: string;
 };
 
 export type DashStatus = 'disconnected' | 'discovering' | 'connecting' | 'connected' | 'error';

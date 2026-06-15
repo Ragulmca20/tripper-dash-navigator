@@ -15,9 +15,7 @@ export default function RoutePreviewScreen() {
   const { params } = useRoute<RouteProp<ParamList, 'RoutePreview'>>();
   const mapRef = useRef<MapView | null>(null);
   const route = useRoutesStore((s) => s.routes.find((r) => r.id === params.routeId));
-  const download = useRoutesStore((s) => s.downloadRoute);
-
-  const polyline: LatLng[] = useMemo(() => route?.polyline ?? [], [route]);
+  const polyline = useMemo<import('react-native-maps').LatLng[]>(() => route?.polyline ?? [], [route]);
   const corridor = useMemo(() => bufferCorridor(polyline, 5), [polyline]); // 5 km
 
   useEffect(() => {
@@ -44,35 +42,32 @@ export default function RoutePreviewScreen() {
       </TouchableOpacity>
 
       <View style={styles.sheet}>
-        <Text style={styles.title}>{route.name}</Text>
+        <Text style={styles.title}>{`${route.from.name} → ${route.to.name}`}</Text>
         <Text style={styles.subtitle}>
-          {route.distanceKm.toFixed(1)} km • {Math.round(route.estimatedMinutes)} min •
-          {' '}+{route.elevationGainM} m
+          {route.distanceKm.toFixed(1)} km • {Math.round(route.durationMin)} min
         </Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 12 }}>
-          <Chip label={`Tiles ≈ ${route.tilesEstimateMb} MB`} />
-          <Chip label={`Corridor ${5} km`} />
-          <Chip label={route.surface ?? 'Mixed'} />
-          <Chip label={route.difficulty ?? 'Moderate'} />
+          <Chip label={`Corridor ${route.corridorRadiusM / 1000} km`} />
+          <Chip label={`${route.maneuvers.length} maneuvers`} />
+          <Chip label={`Package ${Math.round(route.sizeBytes / 1e6)} MB`} />
         </ScrollView>
 
         <View style={styles.actions}>
           <TouchableOpacity
             style={[styles.btn, styles.btnGhost]}
-            onPress={() => nav.navigate('RoutePlanner', { routeId: route.id })}
+            onPress={() => nav.navigate('RoutePlanner')}
           >
             <Text style={styles.btnGhostText}>Edit waypoints</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.btn, styles.btnPrimary]}
             onPress={() => {
-              download(route.id);
-              nav.navigate('NavigationMap', { routeId: route.id });
+              nav.navigate('MapLibreNavigation', { routeId: route.id });
             }}
           >
             <Text style={styles.btnPrimaryText}>
-              {route.downloaded ? 'Start navigation' : 'Download & start'}
+              {route.status === 'ready' ? 'Start navigation' : 'View route'}
             </Text>
           </TouchableOpacity>
         </View>

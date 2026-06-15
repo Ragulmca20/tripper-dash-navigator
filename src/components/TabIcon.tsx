@@ -4,6 +4,9 @@ import { colors } from '@/theme';
 
 export type TabName = 'Search' | 'Routes' | 'Navigate' | 'Scanner' | 'Settings';
 
+type IconProps = { size?: number; color?: string };
+type StarProps = IconProps & { filled?: boolean };
+
 export const TabIcon: React.FC<{ name: TabName; focused: boolean; size?: number }> = ({
   name, focused, size = 24,
 }) => {
@@ -54,55 +57,55 @@ export const TabIcon: React.FC<{ name: TabName; focused: boolean; size?: number 
 
 /** Lightweight outline glyphs reused across screens. */
 export const Icon = {
-  Pin: ({ size = 18, color = colors.amber }) => (
+  Pin: ({ size = 18, color = colors.amber }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M12 22s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12z" stroke={color} strokeWidth={1.6} strokeLinejoin="round"/>
       <Circle cx="12" cy="10" r="2.5" stroke={color} strokeWidth={1.6}/>
     </Svg>
   ),
-  Clock: ({ size = 16, color = colors.textMuted }) => (
+  Clock: ({ size = 16, color = colors.textMuted }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={1.6}/>
       <Path d="M12 7v5l3 2" stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"/>
     </Svg>
   ),
-  Download: ({ size = 16, color = colors.amber }) => (
+  Download: ({ size = 16, color = colors.amber }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M12 4v12m0 0 4-4m-4 4-4-4M4 20h16" stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"/>
     </Svg>
   ),
-  Trash: ({ size = 16, color = colors.danger }) => (
+  Trash: ({ size = 16, color = colors.danger }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M4 7h16M9 7V4h6v3m-8 0 1 13a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-13" stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"/>
     </Svg>
   ),
-  Wifi: ({ size = 16, color = colors.amber }) => (
+  Wifi: ({ size = 16, color = colors.amber }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M2 9a16 16 0 0 1 20 0M5 13a11 11 0 0 1 14 0M8.5 17a6 6 0 0 1 7 0" stroke={color} strokeWidth={1.6} strokeLinecap="round"/>
       <Circle cx="12" cy="20" r="1.2" fill={color}/>
     </Svg>
   ),
-  Sat: ({ size = 16, color = colors.amber }) => (
+  Sat: ({ size = 16, color = colors.amber }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M5 12a7 7 0 0 1 7-7M5 16a11 11 0 0 1 11-11" stroke={color} strokeWidth={1.6} strokeLinecap="round"/>
       <Rect x="4" y="14" width="6" height="6" rx="1" stroke={color} strokeWidth={1.6}/>
     </Svg>
   ),
-  Play: ({ size = 22, color = colors.bg }) => (
+  Play: ({ size = 22, color = colors.bg }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24"><Path d="M7 5v14l12-7z" fill={color}/></Svg>
   ),
-  Pause: ({ size = 22, color = colors.text }) => (
+  Pause: ({ size = 22, color = colors.text }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24"><Rect x="6" y="5" width="4" height="14" fill={color}/><Rect x="14" y="5" width="4" height="14" fill={color}/></Svg>
   ),
-  Stop: ({ size = 22, color = colors.text }) => (
+  Stop: ({ size = 22, color = colors.text }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24"><Rect x="6" y="6" width="12" height="12" rx="1" fill={color}/></Svg>
   ),
-  Chevron: ({ size = 18, color = colors.textMuted }) => (
+  Chevron: ({ size = 18, color = colors.textMuted }: IconProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="m9 6 6 6-6 6" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/>
     </Svg>
   ),
-  Star: ({ size = 16, color = colors.amber, filled = false }) => (
+  Star: ({ size = 16, color = colors.amber, filled = false }: StarProps) => (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : 'none'}>
       <Path d="m12 3 2.9 6 6.6.9-4.8 4.6 1.2 6.6L12 18l-5.9 3.1L7.3 14.5 2.5 9.9 9.1 9z" stroke={color} strokeWidth={1.6} strokeLinejoin="round"/>
     </Svg>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Camera, CameraView } from 'expo-camera';
+import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
 import { colors, radius, spacing, typography } from '@/theme';
 import { ActionButton } from '@/components/ActionButton';
 import { Icon } from '@/components/TabIcon';
@@ -12,7 +12,7 @@ import { useConnectionStore, DEFAULT_DASH_PASSWORD } from '@/store/connectionSto
 type Detection = { ssid?: string; password?: string };
 
 export const ScannerScreen: React.FC = () => {
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
   const cam = useRef<CameraView>(null);
   const [busy, setBusy] = useState(false);
   const [detected, setDetected] = useState<Detection | null>(null);

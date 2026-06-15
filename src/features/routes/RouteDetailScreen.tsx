@@ -44,7 +44,7 @@ export const RouteDetailScreen: React.FC = () => {
           label="START NAVIGATION"
           size="lg"
           icon={<Icon.Play color={colors.bg} />}
-          onPress={() => nav.navigate('NavigationMap', { routeId: route.id })}
+          onPress={() => nav.navigate('MapLibreNavigation', { routeId: route.id })}
         />
         <ActionButton
           label="Preview on Dash"

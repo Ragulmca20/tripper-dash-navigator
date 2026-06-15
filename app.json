@@ -37,9 +37,12 @@
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "REPLACE_WITH_YOUR_ANDROID_GOOGLE_MAPS_KEY"
+          "apiKey": "AIzaSyBqFmB22UEFE6BZB6OT7FjBg2Au9bQCEN8"
         }
       }
+    },
+    "extra": {
+      "googleMapsApiKey": "AIzaSyBqFmB22UEFE6BZB6OT7FjBg2Au9bQCEN8"
     },
     "plugins": [
       "expo-camera",
